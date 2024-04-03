@@ -23,7 +23,38 @@ def draw_x(line_color, screen, clicked_row, clicked_col):
 
 def draw_o(line_color, screen, clicked_row, clicked_col):
     pg.draw.circle(screen, line_color, (int(clicked_col*(WIDTH/3)+WIDTH/6), int(clicked_row*(HEIGHT/3)+HEIGHT/6)), WIDTH/6-WIDTH*0.05, 7)
-
+    
+def check_win(board):
+    global winner, draw
+    # Check for win in rows
+    for row in range(3):
+        if board[row][0] == board[row][1] == board[row][2] and board[row][0] != None:
+            winner = board[row][0]
+            pg.draw.line(screen, (250, 0, 0),
+                (0, (row + 1)*HEIGHT / 3 - HEIGHT / 6),
+                (WIDTH, (row + 1)*HEIGHT / 3 - HEIGHT / 6),
+                4)
+            break
+    # Check for win in columns
+    for col in range(3):
+        if board[0][col] == board[1][col] == board[2][col] and board[0][col] != None:
+            winner = board[0][col]
+            pg.draw.line(screen, (250, 0, 0),
+                ((col + 1)*WIDTH / 3 - WIDTH / 6, 0),
+                ((col + 1)*WIDTH / 3 - WIDTH / 6, HEIGHT),
+                4)
+            break
+    # Check for win in diagonals
+    if board[0][0] == board[1][1] == board[2][2] and board[0][0] != None:
+        winner = board[0][0]
+        pg.draw.line(screen, (250, 0, 0), (0, 0), (WIDTH, HEIGHT), 4)
+        game_over()
+    if board[0][2] == board[1][1] == board[2][0] and board[0][2] != None:
+        winner = board[0][2]
+        pg.draw.line(screen, (250, 0, 0), (0, HEIGHT), (WIDTH, 0), 4)
+    # Check for draw
+    if all([cell != None for row in board for cell in row]) and winner == None:
+        draw = True
 if __name__ == '__main__':
     pg.init()
     CLOCK = pg.time.Clock()
