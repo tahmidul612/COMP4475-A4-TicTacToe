@@ -1,4 +1,5 @@
 import sys
+import time
 import pygame as pg
 from pygame.locals import QUIT, MOUSEBUTTONDOWN
 
@@ -42,18 +43,14 @@ def check_win(board):
         if board[row][0] == board[row][1] == board[row][2] and board[row][0] != None:
             winner = board[row][0]
             pg.draw.line(screen, (250, 0, 0),
-                (0, (row + 1)*HEIGHT / 3 - HEIGHT / 6),
-                (WIDTH, (row + 1)*HEIGHT / 3 - HEIGHT / 6),
-                4)
+            game_over()
             break
     # Check for win in columns
     for col in range(3):
         if board[0][col] == board[1][col] == board[2][col] and board[0][col] != None:
             winner = board[0][col]
             pg.draw.line(screen, (250, 0, 0),
-                ((col + 1)*WIDTH / 3 - WIDTH / 6, 0),
-                ((col + 1)*WIDTH / 3 - WIDTH / 6, HEIGHT),
-                4)
+            game_over()
             break
     # Check for win in diagonals
     if board[0][0] == board[1][1] == board[2][2] and board[0][0] != None:
@@ -63,9 +60,27 @@ def check_win(board):
     if board[0][2] == board[1][1] == board[2][0] and board[0][2] != None:
         winner = board[0][2]
         pg.draw.line(screen, (250, 0, 0), (0, HEIGHT), (WIDTH, 0), 4)
+        game_over()
     # Check for draw
     if all([cell != None for row in board for cell in row]) and winner == None:
         draw = True
+        game_over()
+
+
+def game_over():
+    global winner, draw
+    if winner or draw:
+        if winner:
+            msg = str(f'{winner} wins!')
+        else:
+            msg = str('It\'s a draw!')
+        font = pg.font.Font(None, 48)
+        text = font.render(msg, True, (255, 255, 255))
+        screen.fill((0, 0, 0), (0, HEIGHT/2-50, WIDTH, 100))
+        text_rect = text.get_rect(center=(WIDTH/2, HEIGHT/2))
+        screen.blit(text, text_rect)
+        pg.display.update()
+        reset_game()
 
 
 def board_init(screen, background_color=background_color, line_color=line_color):
