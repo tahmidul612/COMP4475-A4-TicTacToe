@@ -13,19 +13,22 @@ WIDTH = 600
 HEIGHT = 600
 background_color = (255, 255, 255)
 line_color = (0, 0, 0)
+game_running = False
 
 board = [[None]*3, [None]*3, [None]*3]
 '''3x3 Board to store x/o values for each cell'''
 
 
 def reset_game():
-    global board, winner, player_char, draw
+    global board, winner, player_char, draw, game_running
     time.sleep(3)
     player_char = 'x'
     draw = False
     winner = None
     board = [[None]*3, [None]*3, [None]*3]
-    board_init(screen)
+    game_running = False
+    menu()
+    
 
 
 def draw_x(line_color, screen, clicked_row, clicked_col):
@@ -79,12 +82,12 @@ def check_win(board):
 
 def game_over():
     global winner, draw
+    font = pg.font.Font(None, 48)
     if winner or draw:
         if winner:
             msg = str(f'{winner} wins!')
         else:
             msg = str('It\'s a draw!')
-        font = pg.font.Font(None, 48)
         text = font.render(msg, True, (255, 255, 255))
         screen.fill((0, 0, 0), (0, HEIGHT/2-50, WIDTH, 100))
         text_rect = text.get_rect(center=(WIDTH/2, HEIGHT/2))
@@ -93,13 +96,35 @@ def game_over():
         reset_game()
 
 
-def board_init(screen, background_color=background_color, line_color=line_color):
+def board_init(background_color=background_color, line_color=line_color):
+    global game_running
+    game_running = True
+    font = pg.font.Font(None, 48)
+    clock = pg.time.Clock()
+    screen = pg.display.set_mode((WIDTH, HEIGHT))
+    pg.display.set_caption('Tic Tac Toe')
     screen.fill(background_color)
     # Draw board grid
     pg.draw.line(screen, line_color, (WIDTH/3, 0), (WIDTH/3, HEIGHT), 7)
     pg.draw.line(screen, line_color, (WIDTH/3*2, 0), (WIDTH/3*2, HEIGHT), 7)
     pg.draw.line(screen, line_color, (0, HEIGHT/3), (WIDTH, HEIGHT/3), 7)
     pg.draw.line(screen, line_color, (0, HEIGHT/3*2), (WIDTH, HEIGHT/3*2), 7)
+    # Game loop
+    # Draw X or O on the board on mouse click
+    while game_running:
+        for event in pg.event.get():
+            if event.type == QUIT:
+                pg.quit()
+                sys.exit()
+            elif event.type == MOUSEBUTTONDOWN:
+                # Get the row and column of the clicked cell
+                mouseX, mouseY = pg.mouse.get_pos()
+                clicked_row = int(mouseY // (HEIGHT/3))
+                clicked_col = int(mouseX // (WIDTH/3))
+                # Check if the cell is empty then draw X or O
+                turn(board, screen, clicked_row, clicked_col)
+        pg.display.update()
+        clock.tick(30)
 
 
 def turn(board, screen, clicked_row, clicked_col):
@@ -116,27 +141,72 @@ def turn(board, screen, clicked_row, clicked_col):
         check_win(board)
         print(board)
 
-
-if __name__ == '__main__':
-    pg.init()
-    CLOCK = pg.time.Clock()
-    screen = pg.display.set_mode((WIDTH, HEIGHT))
-    pg.display.set_caption('Tic Tac Toe')
-    board_init(screen)
-
-    # Game loop
-    # Draw X or O on the board on mouse click
-    while True:
+def menu():
+    global game_running
+    screen.fill((20, 20, 20))
+    game_running = False
+    Button(WIDTH/2-WIDTH*0.35*0.5, HEIGHT/2-25, WIDTH*0.35,
+           50, 'Start Game', lambda: board_init())
+    while not game_running:
         for event in pg.event.get():
             if event.type == QUIT:
                 pg.quit()
                 sys.exit()
-            elif event.type == MOUSEBUTTONDOWN:
-                # Get the row and column of the clicked cell
-                mouseX, mouseY = pg.mouse.get_pos()
-                clicked_row = int(mouseY // (HEIGHT/3))
-                clicked_col = int(mouseX // (WIDTH/3))
-                # Check if the cell is empty then draw X or O
-                turn(board, screen, clicked_row, clicked_col)
+        for obj in objects:
+            obj.process()
         pg.display.update()
-        CLOCK.tick(30)
+        clock.tick(30)
+
+class Button():
+    def __init__(self, x, y, width, height, buttonText='Button', onclickFunction=None, onePress=True):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.onclickFunction = onclickFunction
+        self.onePress = onePress
+        self.alreadyPressed = False
+
+        self.fillColors = {
+            'normal': '#ffffff',
+            'hover': '#666666',
+            'pressed': '#333333',
+        }
+        font = pg.font.Font(None, 48)
+        self.buttonSurface = pg.Surface((self.width, self.height))
+        self.buttonRect = pg.Rect(self.x, self.y, self.width, self.height)
+        self.buttonSurf = font.render(buttonText, True, (20, 20, 20))
+        objects.append(self)
+
+    def process(self):
+        mousePos = pg.mouse.get_pos()
+        self.buttonSurface.fill(self.fillColors['normal'])
+        if self.buttonRect.collidepoint(mousePos):
+            self.buttonSurface.fill(self.fillColors['hover'])
+            if pg.mouse.get_pressed(num_buttons=3)[0]:
+                self.buttonSurface.fill(self.fillColors['pressed'])
+                if self.onePress:
+                    self.onclickFunction()
+                    objects.remove(self)
+                elif not self.alreadyPressed:
+                    self.onclickFunction()
+                    self.alreadyPressed = True
+                    objects.remove(self)
+            else:
+                self.alreadyPressed = False
+        self.buttonSurface.blit(self.buttonSurf, [
+            self.buttonRect.width/2 - self.buttonSurf.get_rect().width/2,
+            self.buttonRect.height/2 - self.buttonSurf.get_rect().height/2
+        ])
+        screen.blit(self.buttonSurface, self.buttonRect)
+
+def main():
+    pg.display.set_caption('Tic Tac Toe')
+    menu()
+
+if __name__ == '__main__':
+    pg.init()
+    clock = pg.time.Clock()
+    screen = pg.display.set_mode((WIDTH, HEIGHT))
+    objects = []
+    main()
