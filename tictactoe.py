@@ -28,7 +28,6 @@ def reset_game():
     board = [[None]*3, [None]*3, [None]*3]
     game_running = False
     menu()
-    
 
 
 def draw_x(line_color, screen, clicked_row, clicked_col):
@@ -96,7 +95,7 @@ def game_over():
         reset_game()
 
 
-def board_init(background_color=background_color, line_color=line_color):
+def board_init(algorithm, background_color=background_color, line_color=line_color):
     global game_running
     game_running = True
     font = pg.font.Font(None, 48)
@@ -141,12 +140,16 @@ def turn(board, screen, clicked_row, clicked_col):
         check_win(board)
         print(board)
 
+
 def menu():
     global game_running
     screen.fill((20, 20, 20))
     game_running = False
-    Button(WIDTH/2-WIDTH*0.35*0.5, HEIGHT/2-25, WIDTH*0.35,
-           50, 'Start Game', lambda: board_init())
+    button_w, button_h = WIDTH*0.5, 50
+    Button(WIDTH/2-button_w/2, HEIGHT/2-(button_h/2+5), button_w,
+           button_h, 'MinMax Algorithm', lambda: board_init("minmax"))
+    Button(WIDTH/2-button_w/2, HEIGHT/2+(button_h/2+5), button_w,
+           button_h, 'MCTS Algorithm', lambda: board_init("mcts"))
     while not game_running:
         for event in pg.event.get():
             if event.type == QUIT:
@@ -156,6 +159,7 @@ def menu():
             obj.process()
         pg.display.update()
         clock.tick(30)
+
 
 class Button():
     def __init__(self, x, y, width, height, buttonText='Button', onclickFunction=None, onePress=True):
@@ -200,9 +204,11 @@ class Button():
         ])
         screen.blit(self.buttonSurface, self.buttonRect)
 
+
 def main():
     pg.display.set_caption('Tic Tac Toe')
     menu()
+
 
 if __name__ == '__main__':
     pg.init()
