@@ -93,6 +93,21 @@ def board_init(screen, background_color=background_color, line_color=line_color)
     pg.draw.line(screen, line_color, (0, HEIGHT/3*2), (WIDTH, HEIGHT/3*2), 7)
 
 
+def turn(board, screen, clicked_row, clicked_col):
+    global player_char
+    if board[clicked_row][clicked_col] == None:
+        if player_char == 'x':
+            draw_x(line_color, screen, clicked_row, clicked_col)
+            board[clicked_row][clicked_col] = 'x'
+            player_char = 'o'
+        else:
+            draw_o(line_color, screen, clicked_row, clicked_col)
+            board[clicked_row][clicked_col] = 'o'
+            player_char = 'x'
+        check_win(board)
+        print(board)
+
+
 if __name__ == '__main__':
     pg.init()
     CLOCK = pg.time.Clock()
@@ -113,15 +128,5 @@ if __name__ == '__main__':
                 clicked_row = int(mouseY // (HEIGHT/3))
                 clicked_col = int(mouseX // (WIDTH/3))
                 # Check if the cell is empty then draw X or O
-                if board[clicked_row][clicked_col] == None:
-                    if player_char == 'x':
-                        draw_x(line_color, screen, clicked_row, clicked_col)
-                        board[clicked_row][clicked_col] = 'x'
-                        player_char = 'o'
-                    else:
-                        draw_o(line_color, screen, clicked_row, clicked_col)
-                        board[clicked_row][clicked_col] = 'o'
-                        player_char = 'x'
-                    print(board)
-        pg.display.update() 
+                turn(board, screen, clicked_row, clicked_col)
         CLOCK.tick(30)
