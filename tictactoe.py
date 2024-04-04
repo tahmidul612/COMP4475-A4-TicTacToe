@@ -16,6 +16,17 @@ line_color = (0, 0, 0)
 board = [[None]*3, [None]*3, [None]*3]
 '''3x3 Board to store x/o values for each cell'''
 
+
+def reset_game():
+    global board, winner, player_char, draw
+    time.sleep(3)
+    player_char = 'x'
+    draw = False
+    winner = None
+    board = [[None]*3, [None]*3, [None]*3]
+    board_init(screen)
+
+
 def draw_x(line_color, screen, clicked_row, clicked_col):
     pg.draw.line(screen, line_color, (clicked_col*(WIDTH/3)+WIDTH*0.05, clicked_row*(HEIGHT/3)+HEIGHT*0.05), ((clicked_col+1)*(WIDTH/3)-WIDTH*0.05, (clicked_row+1)*(HEIGHT/3)-HEIGHT*0.05), 7)
     pg.draw.line(screen, line_color, ((clicked_col+1)*(WIDTH/3)-WIDTH*0.05, clicked_row *
