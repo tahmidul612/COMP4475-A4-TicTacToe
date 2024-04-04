@@ -66,11 +66,9 @@ def check_win(board):
     # Check for draw
     if all([cell != None for row in board for cell in row]) and winner == None:
         draw = True
-if __name__ == '__main__':
-    pg.init()
-    CLOCK = pg.time.Clock()
-    screen = pg.display.set_mode((WIDTH, HEIGHT))
-    pg.display.set_caption('Tic Tac Toe')
+
+
+def board_init(screen, background_color=background_color, line_color=line_color):
     screen.fill(background_color)
     
     # Draw board grid
@@ -78,6 +76,14 @@ if __name__ == '__main__':
     pg.draw.line(screen, line_color, (WIDTH/3*2, 0), (WIDTH/3*2, HEIGHT), 7)
     pg.draw.line(screen, line_color, (0, HEIGHT/3), (WIDTH, HEIGHT/3), 7)
     pg.draw.line(screen, line_color, (0, HEIGHT/3*2), (WIDTH, HEIGHT/3*2), 7)
+
+
+if __name__ == '__main__':
+    pg.init()
+    CLOCK = pg.time.Clock()
+    screen = pg.display.set_mode((WIDTH, HEIGHT))
+    pg.display.set_caption('Tic Tac Toe')
+    board_init(screen)
 
     # Game loop
     # Draw X or O on the board on mouse click
