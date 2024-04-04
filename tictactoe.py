@@ -3,7 +3,7 @@ import time
 import pygame as pg
 from pygame.locals import QUIT, MOUSEBUTTONDOWN
 
-### Global Variables
+# Global Variables
 player_char = 'x'
 '''Player character: x or o'''
 
@@ -29,13 +29,17 @@ def reset_game():
 
 
 def draw_x(line_color, screen, clicked_row, clicked_col):
-    pg.draw.line(screen, line_color, (clicked_col*(WIDTH/3)+WIDTH*0.05, clicked_row*(HEIGHT/3)+HEIGHT*0.05), ((clicked_col+1)*(WIDTH/3)-WIDTH*0.05, (clicked_row+1)*(HEIGHT/3)-HEIGHT*0.05), 7)
+    pg.draw.line(screen, line_color, (clicked_col*(WIDTH/3)+WIDTH*0.05, clicked_row*(HEIGHT/3) +
+                 HEIGHT*0.05), ((clicked_col+1)*(WIDTH/3)-WIDTH*0.05, (clicked_row+1)*(HEIGHT/3)-HEIGHT*0.05), 7)
     pg.draw.line(screen, line_color, ((clicked_col+1)*(WIDTH/3)-WIDTH*0.05, clicked_row *
                  (HEIGHT/3)+HEIGHT*0.05), (clicked_col*(WIDTH/3)+WIDTH*0.05, (clicked_row+1)*(HEIGHT/3)-HEIGHT*0.05), 7)
 
+
 def draw_o(line_color, screen, clicked_row, clicked_col):
-    pg.draw.circle(screen, line_color, (int(clicked_col*(WIDTH/3)+WIDTH/6), int(clicked_row*(HEIGHT/3)+HEIGHT/6)), WIDTH/6-WIDTH*0.05, 7)
-    
+    pg.draw.circle(screen, line_color, (int(clicked_col*(WIDTH/3)+WIDTH/6),
+                   int(clicked_row*(HEIGHT/3)+HEIGHT/6)), WIDTH/6-WIDTH*0.05, 7)
+
+
 def check_win(board):
     global winner, draw
     # Check for win in rows
@@ -43,6 +47,9 @@ def check_win(board):
         if board[row][0] == board[row][1] == board[row][2] and board[row][0] != None:
             winner = board[row][0]
             pg.draw.line(screen, (250, 0, 0),
+                         (0, (row + 1)*HEIGHT / 3 - HEIGHT / 6),
+                         (WIDTH, (row + 1)*HEIGHT / 3 - HEIGHT / 6),
+                         4)
             game_over()
             break
     # Check for win in columns
@@ -50,6 +57,9 @@ def check_win(board):
         if board[0][col] == board[1][col] == board[2][col] and board[0][col] != None:
             winner = board[0][col]
             pg.draw.line(screen, (250, 0, 0),
+                         ((col + 1)*WIDTH / 3 - WIDTH / 6, 0),
+                         ((col + 1)*WIDTH / 3 - WIDTH / 6, HEIGHT),
+                         4)
             game_over()
             break
     # Check for win in diagonals
@@ -85,7 +95,6 @@ def game_over():
 
 def board_init(screen, background_color=background_color, line_color=line_color):
     screen.fill(background_color)
-    
     # Draw board grid
     pg.draw.line(screen, line_color, (WIDTH/3, 0), (WIDTH/3, HEIGHT), 7)
     pg.draw.line(screen, line_color, (WIDTH/3*2, 0), (WIDTH/3*2, HEIGHT), 7)
@@ -129,4 +138,5 @@ if __name__ == '__main__':
                 clicked_col = int(mouseX // (WIDTH/3))
                 # Check if the cell is empty then draw X or O
                 turn(board, screen, clicked_row, clicked_col)
+        pg.display.update()
         CLOCK.tick(30)
