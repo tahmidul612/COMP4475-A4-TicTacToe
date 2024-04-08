@@ -2,6 +2,58 @@ import math
 import random
 
 
+class MCTS:
+    """Monte Carlo Tree Search algorithm
+    """
+
+    def __init__(self, board, player, iterations=1000):
+        self.root = Node(Board(board))
+        self.player = player
+        self.iterations = iterations
+
+    def best_move(self, board):
+        """
+        Finds the best move to play on the given board using the Monte Carlo Tree Search algorithm.
+
+        Args:
+            board (list): The current state of the game board.
+
+        Returns:
+            tuple: The best move to play on the board.
+
+        """
+        root = Node(Board(board))
+        for _ in range(self.iterations):
+            node = root
+            game_state = root.game_state.copy()
+
+            # Selection
+            while node.untried_moves == [] and node.children != []:  # node is fully expanded and non-terminal
+                node = node.select_child()
+                game_state.make_move(*node.move)
+
+            # Expansion (if state/node is non-terminal)
+            if node.untried_moves:
+                m = random.choice(node.untried_moves)
+                game_state.make_move(*m)
+                # add child and descend tree
+                node = node.add_child(m, game_state)
+
+            # Simulation
+            while game_state.empty:  # while state is non-terminal
+                game_state.make_move(*random.choice(game_state.empty))
+
+        # Backpropagation
+        while node:  # backpropagate from the expanded node and work back to the root node
+            # Update node with result from POV of the player who made the last move
+            node.update(1 if game_state.is_win(
+                node.game_state.current_player) else 0)
+            node = node.parent
+
+        # return the move that was most visited
+        return sorted(root.children, key=lambda c: c.visits)[-1].move
+
+
 class Board:
     """Utility class to represent the game board and game state
     """
@@ -69,55 +121,3 @@ class Node:
     def update(self, result):
         self.visits += 1
         self.wins += result
-
-
-class MCTS:
-    """Monte Carlo Tree Search algorithm
-    """
-
-    def __init__(self, board, player, iterations=1000):
-        self.root = Node(Board(board))
-        self.player = player
-        self.iterations = iterations
-
-    def best_move(self, board):
-        """
-        Finds the best move to play on the given board using the Monte Carlo Tree Search algorithm.
-
-        Args:
-            board (list): The current state of the game board.
-
-        Returns:
-            tuple: The best move to play on the board.
-
-        """
-        root = Node(Board(board))
-        for _ in range(self.iterations):
-            node = root
-            game_state = root.game_state.copy()
-
-            # Selection
-            while node.untried_moves == [] and node.children != []:  # node is fully expanded and non-terminal
-                node = node.select_child()
-                game_state.make_move(*node.move)
-
-            # Expansion (if state/node is non-terminal)
-            if node.untried_moves:
-                m = random.choice(node.untried_moves)
-                game_state.make_move(*m)
-                # add child and descend tree
-                node = node.add_child(m, game_state)
-
-            # Simulation
-            while game_state.empty:  # while state is non-terminal
-                game_state.make_move(*random.choice(game_state.empty))
-
-        # Backpropagation
-        while node:  # backpropagate from the expanded node and work back to the root node
-            # Update node with result from POV of the player who made the last move
-            node.update(1 if game_state.is_win(
-                node.game_state.current_player) else 0)
-            node = node.parent
-
-        # return the move that was most visited
-        return sorted(root.children, key=lambda c: c.visits)[-1].move
