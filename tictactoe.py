@@ -2,7 +2,7 @@ import sys
 import time
 import pygame as pg
 from pygame.locals import QUIT, MOUSEBUTTONDOWN
-import minimax
+import minimax, mcts
 
 # Global Variables
 player_char = 'x'
@@ -111,7 +111,7 @@ def board_init(algorithm, background_color=background_color, line_color=line_col
     pg.draw.line(screen, line_color, (0, HEIGHT/3*2), (WIDTH, HEIGHT/3*2), 7)
     
     ai_char = 'o' if player_char == 'x' else 'x'
-    ai = minimax.MiniMax(board, ai_char, player_char) if algorithm == 'minimax' else mcts.MCTS(board, ai_char, player_char)
+    ai = minimax.MiniMax(board, ai_char, player_char) if algorithm == 'minimax' else mcts.MCTS(board, ai_char)
     # Game loop
     # Draw X or O on the board on mouse click
     while game_running:
@@ -127,7 +127,7 @@ def board_init(algorithm, background_color=background_color, line_color=line_col
                 # Check if the cell is empty then draw X or O
                 if board[clicked_row][clicked_col] == None:
                     turn(board, screen, clicked_row, clicked_col)
-                    turn(board, screen, *ai.bestMove(board))
+                    turn(board, screen, *ai.best_move(board))
         pg.display.update()
         clock.tick(30)
 
