@@ -1,0 +1,13 @@
+{
+    "cSpell.words": [
+        "backpropagate",
+        "Backpropagation",
+        "blit",
+        "collidepoint",
+        "mcts",
+        "minimax",
+        "MOUSEBUTTONDOWN",
+        "pygame"
+    ],
+    "python.analysis.typeCheckingMode": "basic"
+}
