@@ -37,7 +37,7 @@ class MiniMax():
                 return -10
         return 0
     
-    def noMoves(self, board):
+    def no_moves(self, board):
         global winner, draw
         return all([cell != None for row in board for cell in row]) and winner == None
     
@@ -45,7 +45,7 @@ class MiniMax():
         score = self.check_win(board)
         if (score in [-10, 10]):
             return score
-        elif self.noMoves(board):
+        elif self.no_moves(board):
             return 0
         if isMaximizing:
             max_score = -1000
@@ -65,7 +65,7 @@ class MiniMax():
                         min_score = min(min_score, self.minimax(board, depth+1, not isMaximizing))
                         board[row][col] = None
             return min_score
-    def bestMove(self, board):
+    def best_move(self, board):
         best_score = -1000
         best_move = (-1, -1)
         for row in range(3):
