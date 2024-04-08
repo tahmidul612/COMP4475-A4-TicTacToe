@@ -10,7 +10,8 @@ Tic-Tac-Toe game implemented using Python and Pygame. The game has two options f
 
 - Download and run latest release
   
-  ![GitHub Downloads (specific asset, latest release)](https://img.shields.io/github/downloads/tahmidul612/COMP4475-A4-TicTacToe/latest/tictactoe.exe?style=for-the-badge)
+  [![Download Latest](https://img.shields.io/badge/download-latest-blue?style=for-the-badge)](https://github.com/tahmidul612/COMP4475-A4-TicTacToe/releases/latest/download/tictactoe.exe)
+
 
 
 ### Requirements to run/debug python code
