@@ -2,6 +2,7 @@ import sys
 import time
 import pygame as pg
 from pygame.locals import QUIT, MOUSEBUTTONDOWN
+import minimax
 
 # Global Variables
 player_char = 'x'
@@ -108,6 +109,9 @@ def board_init(algorithm, background_color=background_color, line_color=line_col
     pg.draw.line(screen, line_color, (WIDTH/3*2, 0), (WIDTH/3*2, HEIGHT), 7)
     pg.draw.line(screen, line_color, (0, HEIGHT/3), (WIDTH, HEIGHT/3), 7)
     pg.draw.line(screen, line_color, (0, HEIGHT/3*2), (WIDTH, HEIGHT/3*2), 7)
+    
+    ai_char = 'o' if player_char == 'x' else 'x'
+    ai = minimax.MiniMax(board, ai_char, player_char) if algorithm == 'minimax' else mcts.MCTS(board, ai_char, player_char)
     # Game loop
     # Draw X or O on the board on mouse click
     while game_running:
@@ -121,7 +125,9 @@ def board_init(algorithm, background_color=background_color, line_color=line_col
                 clicked_row = int(mouseY // (HEIGHT/3))
                 clicked_col = int(mouseX // (WIDTH/3))
                 # Check if the cell is empty then draw X or O
-                turn(board, screen, clicked_row, clicked_col)
+                if board[clicked_row][clicked_col] == None:
+                    turn(board, screen, clicked_row, clicked_col)
+                    turn(board, screen, *ai.bestMove(board))
         pg.display.update()
         clock.tick(30)
 
@@ -138,7 +144,6 @@ def turn(board, screen, clicked_row, clicked_col):
             board[clicked_row][clicked_col] = 'o'
             player_char = 'x'
         check_win(board)
-        print(board)
 
 
 def menu():
@@ -147,7 +152,7 @@ def menu():
     game_running = False
     button_w, button_h = WIDTH*0.5, 50
     Button(WIDTH/2-button_w/2, HEIGHT/2-(button_h/2+5), button_w,
-           button_h, 'MinMax Algorithm', lambda: board_init("minmax"))
+           button_h, 'MiniMax Algorithm', lambda: board_init("minimax"))
     Button(WIDTH/2-button_w/2, HEIGHT/2+(button_h/2+5), button_w,
            button_h, 'MCTS Algorithm', lambda: board_init("mcts"))
     while not game_running:
