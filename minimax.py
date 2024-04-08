@@ -1,11 +1,12 @@
-class MiniMax():
-    def __init__(self, board: list[list[None]], ai, human):
+class MiniMax:
+    """MiniMax algorithm
+    """    
+    def __init__(self, board: list[list[None]], ai):
         self.board = board.copy()
         self.ai = ai
-        self.human = human
+        self.human = 'x' if ai == 'o' else 'o'
         global winner, draw
         winner, draw = None, False
-
 
     def check_win(self, board):
         global winner, draw
@@ -36,12 +37,24 @@ class MiniMax():
             elif board[0][2] == self.human:
                 return -10
         return 0
-    
+
     def no_moves(self, board):
         global winner, draw
         return all([cell != None for row in board for cell in row]) and winner == None
-    
-    def minimax(self, board, depth, isMaximizing):
+
+    def minimax(self, board, depth, isMaximizing):      
+        """
+        Applies the minimax algorithm to determine the best move for the AI player.
+
+        Args:
+            board: The current state of the tic-tac-toe board.
+            depth: The current depth of the minimax search.
+            isMaximizing: A boolean indicating whether it is the AI player's turn or not.
+
+        Returns:
+            The score of the best move for the AI player.
+
+        """
         score = self.check_win(board)
         if (score in [-10, 10]):
             return score
@@ -53,7 +66,8 @@ class MiniMax():
                 for col in range(3):
                     if board[row][col] == None:
                         board[row][col] = self.ai
-                        max_score = max(max_score, self.minimax(board, depth+1, not isMaximizing))
+                        max_score = max(max_score, self.minimax(
+                            board, depth+1, not isMaximizing))
                         board[row][col] = None
             return max_score
         else:
@@ -62,9 +76,11 @@ class MiniMax():
                 for col in range(3):
                     if board[row][col] == None:
                         board[row][col] = self.human
-                        min_score = min(min_score, self.minimax(board, depth+1, not isMaximizing))
+                        min_score = min(min_score, self.minimax(
+                            board, depth+1, not isMaximizing))
                         board[row][col] = None
             return min_score
+
     def best_move(self, board):
         best_score = -1000
         best_move = (-1, -1)
@@ -77,5 +93,6 @@ class MiniMax():
                     if score > best_score:
                         best_score = score
                         best_move = (row, col)
-        print(f'MiniMax best move: row - {best_move[0]}, col - {best_move[1]} || Score : {best_score}')
+        print(
+            f'MiniMax best move: row - {best_move[0]}, col - {best_move[1]} || Score : {best_score}')
         return best_move
