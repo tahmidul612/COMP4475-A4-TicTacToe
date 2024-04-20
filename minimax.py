@@ -2,7 +2,7 @@ class MiniMax:
     """MiniMax algorithm
     """    
     def __init__(self, board: list[list[None]], ai):
-        self.board = board.copy()
+        self.board = board
         self.ai = ai
         self.human = 'x' if ai == 'o' else 'o'
         global winner, draw
@@ -39,8 +39,7 @@ class MiniMax:
         return 0
 
     def no_moves(self, board):
-        global winner, draw
-        return all([cell != None for row in board for cell in row]) and winner == None
+        return all([cell != None for row in board for cell in row])
 
     def minimax(self, board, depth, isMaximizing):      
         """
@@ -90,6 +89,7 @@ class MiniMax:
                     board[row][col] = self.ai
                     score = self.minimax(board, 0, False)
                     board[row][col] = None
+                    print(f'{row}, {col} = {score}')
                     if score > best_score:
                         best_score = score
                         best_move = (row, col)
