@@ -11,11 +11,11 @@ player_char = 'x'
 
 winner = None
 draw = None
-WIDTH = 600 # Width of the game window
-HEIGHT = 600 # Height of the game window
-background_color = (255, 255, 255) # White background color
-line_color = (0, 0, 0) # Black line color
-game_running = False # Game running flag
+WIDTH = 600  # Width of the game window
+HEIGHT = 600  # Height of the game window
+background_color = (255, 255, 255)  # White background color
+line_color = (0, 0, 0)  # Black line color
+game_running = False  # Game running flag
 
 board = [[None]*3, [None]*3, [None]*3]
 '''3x3 Board to store x/o values for each cell'''
@@ -23,7 +23,7 @@ board = [[None]*3, [None]*3, [None]*3]
 
 def menu():
     """Game menu to select the AI algorithm to play against
-    """    
+    """
     global game_running
     screen.fill((20, 20, 20))
     game_running = False
@@ -41,6 +41,7 @@ def menu():
             obj.process()
         pg.display.update()
         clock.tick(30)
+
 
 def board_init(algorithm: str, background_color: tuple[int, int, int] = background_color, line_color: tuple[int, int, int] = line_color):
     """Initialize the game board and start the game loop
@@ -77,9 +78,12 @@ def board_init(algorithm: str, background_color: tuple[int, int, int] = backgrou
                 # Check if the cell is empty then draw X or O
                 if board[clicked_row][clicked_col] == None:
                     turn(board, screen, clicked_row, clicked_col)
+                    pg.display.update()
                     turn(board, screen, *ai.best_move(board))
+                    pg.display.update()
         pg.display.update()
         clock.tick(30)
+
 
 def reset_game():
     global board, winner, player_char, draw, game_running
@@ -108,30 +112,32 @@ def game_over():
         reset_game()
 
 
-def turn(board, screen, clicked_row, clicked_col, char = None):
+def turn(board, screen, clicked_row, clicked_col, char=None):
     """Process the turn of the player
 
     Args:
         clicked_row: Row number to draw X or O 
         clicked_col: Column number to draw X or O
         char (str, optional): Manually enter character to draw ('x' or 'o'). Defaults to None.
-    """    
+    """
     global player_char
     if board[clicked_row][clicked_col] == None:
         if player_char == 'x' or char == 'x':
             draw_xo(line_color, screen, player_char, clicked_row, clicked_col)
             board[clicked_row][clicked_col] = 'x'
-            if not char: player_char = 'o' # Do not switch player if char is manually entered
+            if not char:
+                player_char = 'o'  # Do not switch player if char is manually entered
         elif player_char == 'o' or char == 'o':
             draw_xo(line_color, screen, player_char, clicked_row, clicked_col)
             board[clicked_row][clicked_col] = 'o'
-            if not char: player_char = 'x'
+            if not char:
+                player_char = 'x'
         check_win(board)
-        
+
 
 def check_win(board):
     """Check for win or draw in the game and end the game if win or draw is found
-    """    
+    """
     global winner, draw
     # Check for win in rows
     for row in range(3):
@@ -194,6 +200,7 @@ def draw_grid(line_color, screen):
     pg.draw.line(screen, line_color, (0, HEIGHT/3), (WIDTH, HEIGHT/3), 7)
     pg.draw.line(screen, line_color, (0, HEIGHT/3*2), (WIDTH, HEIGHT/3*2), 7)
 
+
 class Button():
     def __init__(self, x, y, width, height, buttonText='Button', onclickFunction=None):
         """Button class to create buttons on the screen
@@ -205,7 +212,7 @@ class Button():
             height: height of the button
             buttonText (str, optional): Text to show on the button. Defaults to 'Button'.
             onclickFunction (optional): Function to run on button click. Defaults to None.
-        """        
+        """
         self.x = x
         self.y = y
         self.width = width
